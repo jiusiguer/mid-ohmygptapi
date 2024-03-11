@@ -1,6 +1,7 @@
 # 一个用来简单调用ohmygpt的midjourney文生图模型的测试端
 - 仅供测试api响应使用,不要做生产用途
 - claude3opus模型辅助完成代码的前端
+- [演示站](https://bit.kurssy.tech/)
 
 ## 在项目根目录下运行以下命令来安装依赖项并启动服务器:
 
