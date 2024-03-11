@@ -6,7 +6,7 @@
 
 
 ```bash
-npm install express request
+npm install express request cors
 ```
 ```bash
 node server.js
