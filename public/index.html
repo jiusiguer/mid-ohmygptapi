@@ -4,194 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Generation</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            max-width: 500px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result {
-            max-width: 500px;
-            margin: 20px auto;
-            text-align: center;
-        }
-        #image-preview {
-            max-width: 100%;
-            height: auto;
-            margin-top: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        #progress-container {
-            width: 100%;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        #progress-bar {
-            width: 0;
-            height: 30px;
-            background-color: #4CAF50;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 30px;
-            color: white;
-            transition: width 0.5s ease;
-        }
-        #log-container {
-            max-height: 200px;
-            overflow-y: scroll;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #f0f0f0;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Image Generation</h1>
-    <form id="generation-form">
-        <label for="model">Model:</label>
-        <input type="text" id="model" name="model" required>
+    <header>
+        <h1>Image Generation</h1>
+    </header>
 
-        <label for="prompt">Prompt:</label>
-        <input type="text" id="prompt" name="prompt" required>
+    <main>
+        <div class="button-container">
+            <button id="text-to-image-btn">Text to Image</button>
+            <button id="image-to-image-btn">Image to Image</button>
+        </div>
 
-        <label for="type">Type:</label>
-        <select id="type" name="type" required>
-            <option value="FAST">Fast</option>
-            <option value="NORMAL">Normal</option>
-        </select>
+        <form id="text-to-image-form" class="hidden">
+            <label for="model">Model:</label>
+            <select id="model" name="model" required>
+                <option value="midjourney">Midjourney</option>
+            </select>
 
-        <label for="token">Token:</label>
-        <input type="text" id="token" name="token" required>
+            <label for="prompt">Prompt:</label>
+            <input type="text" id="prompt" name="prompt" required>
 
-        <button type="submit">Generate Image</button>
-    </form>
+            <label for="type">Type:</label>
+            <select id="type" name="type" required>
+                <option value="FAST">Fast</option>
+                <option value="NORMAL">Normal</option>
+            </select>
 
-    <div id="progress-container">
-        <div id="progress-bar"></div>
-    </div>
+            <label for="token">Token:</label>
+            <input type="text" id="token" name="token" required>
 
-    <div id="result">
-        <div id="image-container"></div>
-    </div>
-    
-    <div id="log-container"></div>
-    <script>
-        const form = document.getElementById('generation-form');
-        const imageContainer = document.getElementById('image-container');
-        const progressBar = document.getElementById('progress-bar');
-        const logContainer = document.getElementById('log-container');
+            <button type="submit">Generate Image</button>
+        </form>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        <form id="image-to-image-form" class="hidden">
+            <label for="blend-model">Model:</label>
+            <select id="blend-model" name="model" required>
+                <option value="midjourney">Midjourney</option>
+            </select>
 
-            const model = document.getElementById('model').value;
-            const prompt = document.getElementById('prompt').value;
-            const type = document.getElementById('type').value;
-            const token = document.getElementById('token').value;
+            <label for="images">Images:</label>
+            <input type="file" id="images" name="images" multiple accept="image/*">
 
-            try {
-                const response = await fetch('/generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ model, prompt, type, token })
-                });
+            <div id="image-preview-container"></div>
 
-                if (response.ok) {
-                    pollImageUrl();
-                } else {
-                    console.error('Error generating image');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
+            <p id="image-upload-message"></p>
 
-        async function pollImageUrl() {
-            const response = await fetch('/generated-image');
-            const data = await response.json();
-            if (data.imageUrl) {
-                displayImage(data.imageUrl);
-            } else {
-                setTimeout(pollImageUrl, 1000);
-            }
-        }
+            <label for="dimensions">Dimensions:</label>
+            <select id="dimensions" name="dimensions" required>
+                <option value="PORTRAIT">Portrait</option>
+                <option value="SQUARE">Square</option>
+                <option value="LANDSCAPE">Landscape</option>
+            </select>
 
-        function displayImage(imageUrl) {
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.id = 'image-preview';
-            img.alt = 'Generated Image';
+            <label for="blend-type">Type:</label>
+            <select id="blend-type" name="type" required>
+                <option value="FAST">Fast</option>
+                <option value="NORMAL">Normal</option>
+            </select>
 
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(img);
-        }
+            <label for="blend-token">Token:</label>
+            <input type="text" id="blend-token" name="token" required>
 
-        const eventSource = new EventSource('/events');
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            updateProgressBar(data.progress);
-            updateLog(data.log);
-        };
+            <button type="submit">Generate Blended Image</button>
+        </form>
 
-        function updateProgressBar(progress) {
-            progressBar.style.width = progress;
-            progressBar.textContent = progress;
-        }
+        <div id="result">
+            <div id="image-container"></div>
+        </div>
 
-        function updateLog(log) {
-            const logElement = document.createElement('pre');
-            logElement.textContent = JSON.stringify(log, null, 2);
-            logContainer.appendChild(logElement);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
-    </script>
+        <div class="progress-container hidden">
+            <div class="progress-bar"></div>
+        </div>
+
+        <div class="log-container hidden"></div>
+    </main>
+
+    <div class="notification">Image generation started</div>
+
+    <script src="script.js"></script>
 </body>
 </html>
