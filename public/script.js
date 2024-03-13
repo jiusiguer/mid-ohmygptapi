@@ -91,14 +91,15 @@ textToImageForm.addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            showNotification();
+            showNotification('Image generation started');
             progressContainer.classList.remove('hidden');
             logContainer.classList.remove('hidden');
         } else {
-            console.error('Error generating image');
+            showNotification('API request failed');
         }
     } catch (error) {
         console.error('Error:', error);
+        showNotification('API request failed');
     }
 });
 
@@ -129,17 +130,18 @@ imageToImageForm.addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            showNotification();
+            showNotification('Image generation started');
             progressContainer.classList.remove('hidden');
             logContainer.classList.remove('hidden');
             uploadedImages = [];
             imagePreviewContainer.innerHTML = '';
             updateImageUploadMessage();
         } else {
-            console.error('Error generating blended image');
+            showNotification('API request failed');
         }
     } catch (error) {
         console.error('Error:', error);
+        showNotification('API request failed');
     }
 });
 
@@ -150,28 +152,68 @@ eventSource.onmessage = (event) => {
     updateLog(data.log);
 
     if (data.log.status === 'SUCCESS' && data.log.progress === '100%') {
-        displayImage(data.log.imageDcUrl);
+        displayImage(data.log.imageDcUrl, data.log.imageS3Url);
     }
 };
 
 function updateProgressBar(progress) {
     progressBar.style.width = progress;
+
+    // 移除之前的进度文本
+    const previousProgressText = progressBar.querySelector('span');
+    if (previousProgressText) {
+        progressBar.removeChild(previousProgressText);
+    }
+
+    // 创建新的进度文本
+    const progressText = document.createElement('span');
+    progressText.textContent = progress;
+    progressText.style.position = 'absolute';
+    progressText.style.right = '10px';
+    progressText.style.top = '50%';
+    progressText.style.transform = 'translateY(-50%)';
+    progressText.style.color = 'black';
+    progressText.style.zIndex = '1';
+    progressBar.appendChild(progressText);
 }
 
 function updateLog(log) {
     const logElement = document.createElement('pre');
-    logElement.textContent = JSON.stringify(log, null, 2);
+
+    let actionText = '';
+    if (log.action === 'IMAGINE') {
+        actionText = 'Text-to-Image';
+    } else if (log.action === 'BLEND') {
+        actionText = 'Image-to-Image';
+    }
+
+    logElement.textContent = `[${actionText}] ${JSON.stringify(log, null, 2)}`;
     logContainer.appendChild(logElement);
     logContainer.scrollTop = logContainer.scrollHeight;
 }
 
-function displayImage(imageUrl) {
+function displayImage(imageUrl, imageS3Url) {
     const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = 'Generated Image';
 
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Copy Image Link';
+    copyButton.classList.add('copy-link-btn');
+    copyButton.addEventListener('click', () => {
+        const imageLink = `https://pi.ohmygpt.com/api/v1/content/mj-generated/${imageS3Url}`;
+        navigator.clipboard.writeText(imageLink)
+            .then(() => {
+                showNotification('Image link copied to clipboard');
+            })
+            .catch((error) => {
+                console.error('Failed to copy image link:', error);
+            });
+    });
+
     imageContainer.innerHTML = '';
     imageContainer.appendChild(img);
+    imageContainer.appendChild(copyButton);
 }
 
 function resetUI() {
@@ -182,7 +224,8 @@ function resetUI() {
     logContainer.classList.add('hidden');
 }
 
-function showNotification() {
+function showNotification(message) {
+    notification.textContent = message;
     notification.classList.add('show');
     setTimeout(() => {
         notification.classList.remove('show');
