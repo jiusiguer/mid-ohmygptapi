@@ -1,0 +1,117 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Generation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="logo">
+          <a href="#">Image Generator</a>
+        </div>
+        <div class="nav-links">
+          <a href="#" id="text-to-image-btn">Text to Image</a>
+          <a href="#" id="image-to-image-btn">Image to Image</a>
+          <a href="#" id="image-to-text-btn">Image to Text</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <form id="text-to-image-form" class="hidden">
+        <label for="model">Model:</label>
+        <select id="model" name="model" required>
+          <option value="midjourney">Midjourney</option>
+        </select>
+
+        <label for="prompt">Prompt:</label>
+        <input type="text" id="prompt" name="prompt" maxlength="2500" required />
+
+        <label for="type">Type:</label>
+        <select id="type" name="type" required>
+          <option value="FAST">Fast</option>
+          <option value="NORMAL">Normal</option>
+        </select>
+
+        <label for="token">Token:</label>
+        <input type="text" id="token" name="token" required />
+
+        <button type="submit">Generate Image</button>
+      </form>
+
+      <form id="image-to-image-form" class="hidden">
+        <label for="blend-model">Model:</label>
+        <select id="blend-model" name="model" required>
+          <option value="midjourney">Midjourney</option>
+        </select>
+
+        <label for="images">Images:</label>
+        <input type="file" id="images" name="images" multiple accept="image/*" />
+        <small>Please upload images not exceeding 1MB each</small>
+
+        <div id="image-preview-container"></div>
+
+        <p id="image-upload-message"></p>
+
+        <label for="dimensions">Dimensions:</label>
+        <select id="dimensions" name="dimensions" required>
+          <option value="PORTRAIT">Portrait</option>
+          <option value="SQUARE">Square</option>
+          <option value="LANDSCAPE">Landscape</option>
+        </select>
+
+        <label for="blend-type">Type:</label>
+        <select id="blend-type" name="type" required>
+          <option value="FAST">Fast</option>
+          <option value="NORMAL">Normal</option>
+        </select>
+
+        <label for="blend-token">Token:</label>
+        <input type="text" id="blend-token" name="token" required />
+
+        <button type="submit">Generate Blended Image</button>
+      </form>
+
+      <form id="image-to-text-form" class="hidden">
+        <label for="image-to-text-model">Model:</label>
+        <select id="image-to-text-model" name="model" required>
+          <option value="midjourney">Midjourney</option>
+        </select>
+
+        <label for="image-to-text-image">Image:</label>
+        <input type="file" id="image-to-text-image" name="image" accept="image/*" required />
+
+        <label for="image-to-text-type">Type:</label>
+        <select id="image-to-text-type" name="type" required>
+          <option value="FAST">Fast</option>
+          <option value="NORMAL">Normal</option>
+        </select>
+
+        <label for="image-to-text-token">Token:</label>
+        <input type="text" id="image-to-text-token" name="token" required />
+
+        <button type="submit">Generate Text</button>
+      </form>
+
+      <div id="result">
+        <div id="image-container"></div>
+      </div>
+
+      <div class="progress-container hidden">
+        <div class="progress-bar"></div>
+      </div>
+
+      <div class="log-container hidden"></div>
+    </main>
+
+    <div class="notification">Image generation started</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

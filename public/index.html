@@ -1,0 +1,172 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Image Generation</title>
+   <!-- 引入 Font Awesome 样式 -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+   <!-- 引入自定义样式表 -->
+   <link rel="stylesheet" href="style.css" />
+ </head>
+ <body>
+   <header>
+     <nav>
+       <div class="logo">
+         <a href="#">Image Generator</a>
+       </div>
+       <div class="nav-links">
+         <a href="#" id="text-to-image-btn">Text to Image</a>
+         <a href="#" id="image-to-image-btn">Image to Image</a>
+         <a href="#" id="image-to-text-btn">Image to Text</a>
+       </div>
+     </nav>
+   </header>
+
+   <main>
+     <!-- 文本到图像表单 -->
+     <form id="text-to-image-form" class="hidden">
+       <label for="model">Model:</label>
+       <select id="model" name="model" required>
+         <option value="midjourney">Midjourney</option>
+       </select>
+
+       <label for="prompt">Prompt:</label>
+       <input type="text" id="prompt" name="prompt" maxlength="2500" required />
+
+       <label for="type">Type:</label>
+       <select id="type" name="type" required>
+         <option value="FAST">Fast</option>
+         <option value="NORMAL">Normal</option>
+       </select>
+
+       <label for="token">Token:</label>
+       <input type="text" id="token" name="token" required />
+
+       <button type="submit">Generate Image</button>
+
+       <!-- Action功能界面 -->
+       <div id="action-container" class="hidden">
+        <h2>Action</h2>
+        <div id="action-options">
+          <label>
+            <input type="radio" name="action-type" value="upsample"> Upsample
+          </label>
+          <label>
+            <input type="radio" name="action-type" value="variation"> Variation
+          </label>
+          <label>
+            <input type="radio" name="action-type" value="reroll"> Reroll
+          </label>
+        </div>
+        <div id="action-positions" class="hidden">
+          <label>
+            <input type="radio" name="action-position" value="1"> 1
+          </label>
+          <label>
+            <input type="radio" name="action-position" value="2"> 2
+          </label>
+          <label>
+            <input type="radio" name="action-position" value="3"> 3
+          </label>
+          <label>
+            <input type="radio" name="action-position" value="4"> 4
+          </label>
+        </div>
+        <button id="action-submit">Submit</button>
+      </div>
+
+      <!-- Action进度条容器 -->
+      <div id="action-progress-container" class="hidden">
+        <div id="action-progress-bar"></div>
+      </div>
+
+      <!-- Action日志容器 -->
+      <div id="action-log-container" class="hidden"></div>
+     </form>
+
+     <!-- 图像到图像表单 -->
+     <form id="image-to-image-form" class="hidden">
+       <label for="blend-model">Model:</label>
+       <select id="blend-model" name="model" required>
+         <option value="midjourney">Midjourney</option>
+       </select>
+
+       <label for="images">Images:</label>
+       <input type="file" id="images" name="images" multiple accept="image/*" />
+       <small>Please upload images not exceeding 1MB each</small>
+
+       <div id="image-preview-container"></div>
+
+       <p id="image-upload-message"></p>
+
+       <label for="dimensions">Dimensions:</label>
+       <select id="dimensions" name="dimensions" required>
+         <option value="PORTRAIT">Portrait</option>
+         <option value="SQUARE">Square</option>
+         <option value="LANDSCAPE">Landscape</option>
+       </select>
+
+       <label for="blend-type">Type:</label>
+       <select id="blend-type" name="type" required>
+         <option value="FAST">Fast</option>
+         <option value="NORMAL">Normal</option>
+       </select>
+
+       <label for="blend-token">Token:</label>
+       <input type="text" id="blend-token" name="token" required />
+
+       <button type="submit">Generate Blended Image</button>
+     </form>
+
+     <!-- 图像到文本表单 -->
+     <form id="image-to-text-form" class="hidden">
+       <label for="image-to-text-model">Model:</label>
+       <select id="image-to-text-model" name="model" required>
+         <option value="midjourney">Midjourney</option>
+       </select>
+
+       <label for="image-to-text-image">Image:</label>
+       <input type="file" id="image-to-text-image" name="image" accept="image/*" required />
+
+       <label for="image-to-text-type">Type:</label>
+       <select id="image-to-text-type" name="type" required>
+         <option value="FAST">Fast</option>
+         <option value="NORMAL">Normal</option>
+       </select>
+
+       <label for="image-to-text-token">Token:</label>
+       <input type="text" id="image-to-text-token" name="token" required />
+
+       <button type="submit">Generate Text</button>
+
+       <div id="image-to-text-result" class="hidden">
+        <div id="image-to-text-prompt"></div>
+       </div>
+     </form>
+
+     <!-- 图像显示容器 -->
+     <div id="result">
+       <div id="image-container"></div>
+       <div id="action-image-container"></div> <!-- 添加这一行 -->
+     </div>
+
+     <!-- 进度条容器 -->
+     <div class="progress-container hidden">
+       <div class="progress-bar"></div>
+     </div>
+
+     <!-- 日志容器 -->
+     <div class="log-container hidden"></div>
+   </main>
+
+   <!-- 通知框 -->
+   <div class="notification">Image generation started</div>
+
+   <!-- 引入 Font Awesome 脚本 -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+   <!-- 引入自定义脚本 -->
+   <script src="script.js"></script>
+ </body>
+</html>
