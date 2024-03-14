@@ -7,7 +7,7 @@
 
 
 ```bash
-npm install express request cors
+npm install express request cors multer form-data
 ```
 ```bash
 node server.js
